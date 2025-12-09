@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wang.wangpicture.mapper.PictureMapper">
+<mapper namespace="com.wang.wangpicture.mapper.SpaceMapper">
 
     <resultMap id="BaseResultMap" type="com.wang.wangpicture.model.entity.Space">
             <id property="id" column="id" jdbcType="BIGINT"/>
@@ -10,6 +10,7 @@
             <result property="spaceLevel" column="spaceLevel" jdbcType="INTEGER"/>
             <result property="maxSize" column="maxSize" jdbcType="BIGINT"/>
             <result property="maxCount" column="maxCount" jdbcType="BIGINT"/>
+            <result property="totalCount" column="totalCount" jdbcType="BIGINT"/>
             <result property="totalSize" column="totalSize" jdbcType="BIGINT"/>
             <result property="userId" column="userId" jdbcType="BIGINT"/>
             <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>

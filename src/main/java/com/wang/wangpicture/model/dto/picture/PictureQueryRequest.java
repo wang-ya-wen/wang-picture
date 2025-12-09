@@ -71,6 +71,14 @@ public class PictureQueryRequest extends PageRequest implements Serializable {
      */
     private Long userId;
     /**
+     * 空间id
+     */
+    private Long spaceId;
+    /**
+     * 是否只查询spaceId为null的数据
+     */
+    private boolean nullSpaceId;
+    /**
      * 审核状态 0-待审核 1-通过;2-拒绝
      */
     private Integer reviewStatus;
@@ -89,6 +97,14 @@ public class PictureQueryRequest extends PageRequest implements Serializable {
      * 审核时间
      */
     private Date reviewTime;
+
+    public boolean isNullSpaceId() {
+        return nullSpaceId;
+    }
+
+    public void setNullSpaceId(boolean nullSpaceId) {
+        this.nullSpaceId = nullSpaceId;
+    }
 
     public Integer getReviewStatus() {
         return reviewStatus;
@@ -218,5 +234,13 @@ public class PictureQueryRequest extends PageRequest implements Serializable {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Long getSpaceId() {
+        return spaceId;
+    }
+
+    public void setSpaceId(Long spaceId) {
+        this.spaceId = spaceId;
     }
 }

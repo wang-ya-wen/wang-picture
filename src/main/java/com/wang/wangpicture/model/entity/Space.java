@@ -38,7 +38,11 @@ public class Space implements Serializable {
      * 空间图片的最大数量
      */
     private Long maxCount;
-
+    /**
+     * 空间图片的总数量
+     *
+     */
+    private Long totalCount;
     /**
      * 当前空间下图片的总大小
      */
@@ -159,5 +163,13 @@ public class Space implements Serializable {
 
     public void setIsDelete(Byte isDelete) {
         this.isDelete = isDelete;
+    }
+
+    public Long getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(Long totalCount) {
+        this.totalCount = totalCount;
     }
 }

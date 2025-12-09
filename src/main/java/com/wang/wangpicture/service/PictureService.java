@@ -3,10 +3,7 @@ package com.wang.wangpicture.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wang.wangpicture.model.dto.picture.PictureQueryRequest;
-import com.wang.wangpicture.model.dto.picture.PictureReviewRequest;
-import com.wang.wangpicture.model.dto.picture.PictureUploadByBatchRequest;
-import com.wang.wangpicture.model.dto.picture.PictureUploadRequest;
+import com.wang.wangpicture.model.dto.picture.*;
 import com.wang.wangpicture.model.entity.Picture;
 import com.wang.wangpicture.model.entity.User;
 import com.wang.wangpicture.model.vo.PictureVo;
@@ -78,5 +75,24 @@ public interface PictureService extends IService<Picture> {
     */
     Integer uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest,User loginUser);
 
+   /**
+    * 校验空间图片的权限
+    * @param loginUser
+    * @param picture
+    */
+    void checkPictureAuth(User loginUser,Picture picture);
 
+   /**
+    * 删除图片
+    * @param pictureId
+    * @param loginUser
+    */
+    void deletePicture(long pictureId,User loginUser);
+
+   /**
+    * 编辑图片
+    * @param pictureEditRequest
+    * @param loginUser
+    */
+    void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
 }

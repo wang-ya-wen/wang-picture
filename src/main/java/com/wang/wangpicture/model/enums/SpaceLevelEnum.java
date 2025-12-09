@@ -10,27 +10,21 @@ import java.util.Objects;
  */
 @Getter
 public enum SpaceLevelEnum {
-    COMMON("普通版",0,100,100L*1024*1024),
-    PROFESSIONAL("专业版",1,1000,1000L*1024*1024),
-    FLAGSHIP("旗舰版",2,10000,10000L*1024*1024);
+    COMMON(0, "普通版", 100, 100L * 1024 * 1024),
+    PROFESSIONAL(1, "专业版", 1000, 1000L * 1024 * 1024),
+    FLAGSHIP(2, "旗舰版", 10000, 10000L * 1024 * 1024);
 
-    private final String text;
+
     private final int value;
-    private final long max_Count;
-    private final long max_Size;
+    private final String text;
+    private final long maxCount;
+    private final long maxSize;
 
-    /**
-     *
-     * @param text 文本
-     * @param value  值
-     * @param max_Count  最大图片信息
-     * @param max_Size    最大图片总数量
-     */
-    SpaceLevelEnum(String text, int value, long max_Count, long max_Size) {
-        this.text = text;
+    SpaceLevelEnum(int value, String text, long maxCount, long maxSize) {
         this.value = value;
-        this.max_Count = max_Count;
-        this.max_Size = max_Size;
+        this.text = text;
+        this.maxCount = maxCount;
+        this.maxSize = maxSize;
     }
 
     public static SpaceLevelEnum getEnumByValue(Integer value) {
@@ -53,11 +47,11 @@ public enum SpaceLevelEnum {
         return value;
     }
 
-    public long getMax_Count() {
-        return max_Count;
+    public long getMaxCount() {
+        return maxCount;
     }
 
-    public long getMax_Size() {
-        return max_Size;
+    public long getMaxSize() {
+        return maxSize;
     }
 }
