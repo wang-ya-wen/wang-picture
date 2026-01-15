@@ -9,6 +9,11 @@ public class UploadPictureResult {
      */
     private String url;
     /**
+     * 缩略图地址
+     */
+    private String thumbnailUrl;
+
+    /**
      * 图片名称
      */
     private String picName;
@@ -32,6 +37,10 @@ public class UploadPictureResult {
      * 图片格式
      */
     private String picFormat;
+    /**
+     * 图片主色调
+     */
+    private String picColor;
 
     public String getUrl() {
         return url;
@@ -87,5 +96,36 @@ public class UploadPictureResult {
 
     public void setPicFormat(String picFormat) {
         this.picFormat = picFormat;
+    }
+
+    public String getPicColor() {
+        return picColor;
+    }
+
+    public void setPicColor(String picColor) {
+        this.picColor = picColor;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
+    @Override
+    public String toString() {
+        return "UploadPictureResult{" +
+                "url='" + url + '\'' +
+                ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", picName='" + picName + '\'' +
+                ", picSize=" + picSize +
+                ", picWidth=" + picWidth +
+                ", picHeight=" + picHeight +
+                ", picScale=" + picScale +
+                ", picFormat='" + picFormat + '\'' +
+                ", picColor='" + picColor + '\'' +
+                '}';
     }
 }

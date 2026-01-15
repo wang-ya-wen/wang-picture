@@ -75,7 +75,7 @@ create table space
     userId     bigint                             not null comment '创建用户的id',
     createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
     editTime   datetime default CURRENT_TIMESTAMP not null comment '编辑时间',
-    updateTime datetime default CURRENT_TIMESTAMP not null comment '编辑时间',
+    updateTime datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIME comment '更新时间时间',
     isDelete   tinyint  default 0                 not null comment '是否删除',
     spaceId    mediumtext                         null comment '空间的id'
 );
@@ -88,3 +88,10 @@ create index idx_spaceName
 
 create index idx_userId
     on space (userId);
+
+ALTER TABLE picture
+     ADD COLUMN picColor varchar(16) null comment '图片主色调';
+
+ALTER TABLE picture
+    ADD COLUMN thumbnailUrl varchar(512) null comment '图片缩略图url';
+

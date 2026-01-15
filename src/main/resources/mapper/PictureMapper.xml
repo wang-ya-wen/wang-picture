@@ -7,6 +7,7 @@
     <resultMap id="BaseResultMap" type="com.wang.wangpicture.model.entity.Picture">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="url" column="url" jdbcType="VARCHAR"/>
+            <result property="thumbnailUrl" column="thumbnailUrl" jdbcType="VARCHAR"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="introduction" column="introduction" jdbcType="VARCHAR"/>
             <result property="category" column="category" jdbcType="VARCHAR"/>
@@ -26,15 +27,17 @@
             <result property="reviewMessage" column="reviewMessage" jdbcType="VARCHAR"/>
             <result property="reviewrId" column="reviewrId" jdbcType="BIGINT"/>
             <result property="reviewTime" column="reviewTime" jdbcType="TIMESTAMP"/>
+            <result property="picColor" column="picColor" jdbcType="TIMESTAMP"/>
+
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,url,name,
+        id,url,thumbnailUrl,name,
         introduction,category,tags,
         picSize,picWidth,picHeight,
         picScale,picFormat,userId,spaceId,
         createTime,editTime,updateTime,
         isDelete,reviewStatus,reviewMessage,
-        reviewrId,reviewTime
+        reviewrId,reviewTime,picColor
     </sql>
 </mapper>

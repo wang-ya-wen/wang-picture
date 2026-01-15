@@ -10,6 +10,7 @@ import com.wang.wangpicture.model.vo.PictureVo;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  *
@@ -96,5 +97,6 @@ public interface PictureService extends IService<Picture> {
     */
     void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
 
+    List<PictureVo> searchPictureByColor(Long spaceId, String picColor, User loginUser);
 
 }

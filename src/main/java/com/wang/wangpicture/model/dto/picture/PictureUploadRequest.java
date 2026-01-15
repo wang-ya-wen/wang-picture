@@ -20,6 +20,10 @@ public class PictureUploadRequest implements Serializable {
      */
     private String fileUrl;
     /**
+     * 图片主色调
+     */
+    private String picColor;
+    /**
      * 空间id
      */
     private Long spaceId;
@@ -58,5 +62,13 @@ public class PictureUploadRequest implements Serializable {
 
     public void setPicName(String picName) {
         this.picName = picName;
+    }
+
+    public String getPicColor() {
+        return picColor;
+    }
+
+    public void setPicColor(String picColor) {
+        this.picColor = picColor;
     }
 }

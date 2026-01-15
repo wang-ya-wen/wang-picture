@@ -24,6 +24,12 @@ public class Picture implements Serializable {
 
      */
     private String url;
+    /**
+     * 图片缩略图地址
+
+     */
+    private String thumbnailUrl;
+
 
     /**
      * 图片名称
@@ -70,6 +76,18 @@ public class Picture implements Serializable {
      * 图片格式
      */
     private String picFormat;
+    /**
+     * 图片主色调
+     */
+    private String picColor;
+
+    public String getPicColor() {
+        return picColor;
+    }
+
+    public void setPicColor(String picColor) {
+        this.picColor = picColor;
+    }
 
     /**
      * 创建用户id
@@ -290,5 +308,42 @@ public class Picture implements Serializable {
 
     public void setReviewTime(Date reviewTime) {
         this.reviewTime = reviewTime;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
+    @Override
+    public String toString() {
+        return "Picture{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", name='" + name + '\'' +
+                ", introduction='" + introduction + '\'' +
+                ", category='" + category + '\'' +
+                ", tags='" + tags + '\'' +
+                ", picSize=" + picSize +
+                ", picWidth=" + picWidth +
+                ", picHeight=" + picHeight +
+                ", picScale=" + picScale +
+                ", picFormat='" + picFormat + '\'' +
+                ", picColor='" + picColor + '\'' +
+                ", userId=" + userId +
+                ", spaceId=" + spaceId +
+                ", createTime=" + createTime +
+                ", editTime=" + editTime +
+                ", updateTime=" + updateTime +
+                ", isDelete=" + isDelete +
+                ", reviewStatus=" + reviewStatus +
+                ", reviewMessage='" + reviewMessage + '\'' +
+                ", reviewrId=" + reviewrId +
+                ", reviewTime=" + reviewTime +
+                '}';
     }
 }

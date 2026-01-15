@@ -22,6 +22,10 @@ public class PictureVo implements Serializable {
      */
     private String url;
     /**
+     * 缩略图 url
+     */
+    private String thumbnailUrl;
+    /**
      * 图片名称
      */
     private String name;
@@ -54,7 +58,10 @@ public class PictureVo implements Serializable {
      * 图片格式
      */
     private String picFormat;
-
+    /**
+     * 图片主色调
+     */
+    private String picColor;
     /**
      * 创建用户id
      */
@@ -115,6 +122,14 @@ public class PictureVo implements Serializable {
         //类型不同，需要转换
         pictureVo.setTags(JSONUtil.toList(picture.getTags(),String.class));
         return pictureVo;
+    }
+
+    public String getPicColor() {
+        return picColor;
+    }
+
+    public void setPicColor(String picColor) {
+        this.picColor = picColor;
     }
 
     public Long getId() {
@@ -235,5 +250,37 @@ public class PictureVo implements Serializable {
 
     public void setUser(UserVo user) {
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "PictureVo{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", name='" + name + '\'' +
+                ", introduction='" + introduction + '\'' +
+                ", tags=" + tags +
+                ", picSize=" + picSize +
+                ", picWidth=" + picWidth +
+                ", picHeight=" + picHeight +
+                ", picScale=" + picScale +
+                ", picFormat='" + picFormat + '\'' +
+                ", picColor='" + picColor + '\'' +
+                ", userId=" + userId +
+                ", spaceId=" + spaceId +
+                ", createTime=" + createTime +
+                ", editTime=" + editTime +
+                ", updateTime=" + updateTime +
+                ", user=" + user +
+                '}';
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 }
