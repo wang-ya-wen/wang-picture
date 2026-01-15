@@ -201,6 +201,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         String sortOrder = pictureQueryRequest.getSortOrder();
         Long spaceId = pictureQueryRequest.getSpaceId();
         boolean nullSpaceId = pictureQueryRequest.isNullSpaceId();
+        Date startEditTime = pictureQueryRequest.getStartEditTime();
+        Date endEditTime=pictureQueryRequest.getEndEditTime();
         //从多字段中搜索
         if(StrUtil.isNotBlank(searchText)){
             //需要拼接查询条件
@@ -223,6 +225,10 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         queryWrapper.eq(ObjUtil.isNotEmpty(reviewStatus),"reviewStatus",reviewStatus);
         queryWrapper.like(StrUtil.isNotEmpty(reviewMessage),"reviewMessage",reviewMessage);
         queryWrapper.eq(ObjUtil.isNotEmpty(reviewrId),"reviewrId",reviewrId);
+        //大于等于开始时间
+        queryWrapper.ge(ObjUtil.isNotEmpty(startEditTime),"startEditTime",startEditTime);
+        //小于等于结束时间
+        queryWrapper.lt(ObjUtil.isNotEmpty(endEditTime),"endEditTime",endEditTime);
 
         //JSON数据查询
         if(CollUtil.isNotEmpty(tags)){

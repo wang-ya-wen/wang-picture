@@ -95,4 +95,6 @@ public interface PictureService extends IService<Picture> {
     * @param loginUser
     */
     void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
+
+
 }

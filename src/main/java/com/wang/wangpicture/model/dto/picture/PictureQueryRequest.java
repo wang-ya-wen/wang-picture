@@ -97,6 +97,30 @@ public class PictureQueryRequest extends PageRequest implements Serializable {
      * 审核时间
      */
     private Date reviewTime;
+    /**
+     * 开始编辑时间
+     */
+    private Date startEditTime;
+    /**
+     * 结束编辑时间
+     */
+    private Date endEditTime;
+
+    public Date getStartEditTime() {
+        return startEditTime;
+    }
+
+    public void setStartEditTime(Date startEditTime) {
+        this.startEditTime = startEditTime;
+    }
+
+    public Date getEndEditTime() {
+        return endEditTime;
+    }
+
+    public void setEndEditTime(Date endEditTime) {
+        this.endEditTime = endEditTime;
+    }
 
     public boolean isNullSpaceId() {
         return nullSpaceId;

@@ -8,10 +8,7 @@ import com.wang.wangpicture.constant.UserConstant;
 import com.wang.wangpicture.exception.BusinessException;
 import com.wang.wangpicture.exception.ErrorCode;
 import com.wang.wangpicture.exception.ThrowUtils;
-import com.wang.wangpicture.model.dto.space.SpaceEditRequest;
-import com.wang.wangpicture.model.dto.space.SpaceLevel;
-import com.wang.wangpicture.model.dto.space.SpaceQueryRequest;
-import com.wang.wangpicture.model.dto.space.SpaceUpdateRequest;
+import com.wang.wangpicture.model.dto.space.*;
 import com.wang.wangpicture.model.entity.Space;
 import com.wang.wangpicture.model.entity.User;
 import com.wang.wangpicture.model.enums.SpaceLevelEnum;
@@ -41,7 +38,7 @@ public class SpaceController {
     private PictureService pictureService;
     @Resource
     private SpaceService spaceService;
- 
+
 
     /**
      * 删除空间

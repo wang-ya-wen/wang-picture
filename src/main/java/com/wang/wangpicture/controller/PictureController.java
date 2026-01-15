@@ -4,6 +4,8 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.databind.ser.Serializers;
 import com.wang.wangpicture.annotation.AuthCheck;
+import com.wang.wangpicture.api.imageSearch.ImageSearchApiFacade;
+import com.wang.wangpicture.api.imageSearch.model.ImageSearchResult;
 import com.wang.wangpicture.common.BaseResponse;
 import com.wang.wangpicture.common.DeleteRequest;
 import com.wang.wangpicture.common.ResultUtils;
@@ -155,6 +157,13 @@ public class PictureController {
         //获取封装类
         return ResultUtils.success(picture);
     }
+
+    /**
+     * 根据id获取图片(给普通用户使用)
+     * @param id
+     * @param request
+     * @return
+     */
     @GetMapping("/get/vo")
     public BaseResponse<PictureVo> getPictureVoById(long id,HttpServletRequest request){
         ThrowUtils.throwIf(id<=0,ErrorCode.PARAMS_ERROR);
@@ -222,7 +231,12 @@ public class PictureController {
         //获取封装类
         return ResultUtils.success(pictureService.getPictureVoPage(picturePage,request));
     }
-
+    /**
+     * 编辑图片(仅本人或管理员可用)
+     * @param pictureEditRequest
+     * @param request
+     * @return
+     */
     @PostMapping("/edit")
     public BaseResponse<Boolean> editPicture(@RequestBody PictureEditRequest pictureEditRequest, HttpServletRequest request){
         if(pictureEditRequest==null || pictureEditRequest.getId()<=0){
@@ -268,6 +282,13 @@ public class PictureController {
         return ResultUtils.success(pictureTagCategory);
 
     }
+
+    /**
+     * 图片审核(仅管理员可用)
+     * @param pictureReviewRequest
+     * @param request
+     * @return
+     */
    @PostMapping("/review")
    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
    public BaseResponse<Boolean> doPictureReview(@RequestBody PictureReviewRequest pictureReviewRequest,HttpServletRequest request){
@@ -277,6 +298,13 @@ public class PictureController {
         return ResultUtils.success(true);
 
    }
+
+    /**
+     * 批量上传
+     * @param pictureUploadByBatchRequest
+     * @param request
+     * @return
+     */
 
     @PostMapping("/upload/batch")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
@@ -288,4 +316,25 @@ public class PictureController {
 
     }
 
-}
+    /**
+     * 以图搜图
+     * @param searchPictureByPictureRequest
+     * @return
+     */
+    @PostMapping("/search/picture")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<List<ImageSearchResult>> searchPictureByPicture(@RequestBody SearchPictureByPictureRequest searchPictureByPictureRequest){
+        ThrowUtils.throwIf(searchPictureByPictureRequest==null,ErrorCode.PARAMS_ERROR);
+        Long pictureId=searchPictureByPictureRequest.getPictureId();
+        ThrowUtils.throwIf(pictureId==null||pictureId<=0,ErrorCode.PARAMS_ERROR);
+        Picture picture=pictureService.getById(pictureId);
+        if(picture==null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+
+        List<ImageSearchResult> imageSearchResults = ImageSearchApiFacade.searchImage(picture.getUrl());
+        return ResultUtils.success(imageSearchResults);
+        }
+
+    }
+
