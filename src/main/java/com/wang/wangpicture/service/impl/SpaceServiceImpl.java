@@ -200,6 +200,17 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
             }
         }
     }
+
+    @Override
+    public void checkSpaceAuth(Space space, User loginUser) {
+        ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR, "空间不存在");
+        Long spaceUserId = space.getUserId();
+        Long loginUserId = loginUser.getId();
+        if (!loginUserId.equals(spaceUserId)) {
+            ThrowUtils.throwIf(!userService.isAdmin(loginUser), ErrorCode.NO_AUTH_ERROR);
+        }
+
+    }
 }
 
 

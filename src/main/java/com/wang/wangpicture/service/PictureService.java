@@ -3,6 +3,8 @@ package com.wang.wangpicture.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.wang.wangpicture.api.aliyun.model.CreateOutPaintingTaskRequest;
+import com.wang.wangpicture.api.aliyun.model.CreateOutPaintingTaskResponse;
 import com.wang.wangpicture.model.dto.picture.*;
 import com.wang.wangpicture.model.entity.Picture;
 import com.wang.wangpicture.model.entity.User;
@@ -111,4 +113,12 @@ public interface PictureService extends IService<Picture> {
      * @param oldPicture
      */
     void clearPictureFile(Picture oldPicture);
+
+    /**
+     * 扩图请求
+     *
+     * @param createOutPaintingTaskRequest
+     * @param loginUser
+     */
+    CreateOutPaintingTaskResponse createPictureOutPaintingTask(CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest, User loginUser);
 }

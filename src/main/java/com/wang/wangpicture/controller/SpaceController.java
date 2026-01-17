@@ -71,10 +71,11 @@ public class SpaceController {
         Space oldSpace = spaceService.getById(id);
         ThrowUtils.throwIf(oldSpace==null,ErrorCode.NOT_FOUND_ERROR);
         //仅本人或者管理员可以删除
-        //仅本人或管理员可编辑
-        if(!oldSpace.getId().equals(loginUser.getId())&&!userService.isAdmin(loginUser)){
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-        }
+//        //仅本人或管理员可编辑
+//        if(!oldSpace.getId().equals(loginUser.getId())&&!userService.isAdmin(loginUser)){
+//            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+//        }
+        spaceService.checkSpaceAuth(oldSpace, loginUser);
         //操作数据库
         boolean result = spaceService.removeById(id);
         ThrowUtils.throwIf(!result,ErrorCode.OPERATION_ERROR);
@@ -191,10 +192,11 @@ public class SpaceController {
         long id=spaceEditRequest.getId();
         Space oldSpace = spaceService.getById(id);
         ThrowUtils.throwIf(oldSpace==null,ErrorCode.NOT_FOUND_ERROR);
-        //仅本人或管理员可编辑
-        if(!oldSpace.getId().equals(loginUser.getId())&&!userService.isAdmin(loginUser)){
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-        }
+//        //仅本人或管理员可编辑
+//        if(!oldSpace.getId().equals(loginUser.getId())&&!userService.isAdmin(loginUser)){
+//            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+//        }
+        spaceService.checkSpaceAuth(oldSpace, loginUser);
         //操作数据库
         boolean result = spaceService.updateById(space);
         ThrowUtils.throwIf(!result,ErrorCode.OPERATION_ERROR);
@@ -207,14 +209,15 @@ public class SpaceController {
      * @return
      */
     @GetMapping("/list/level")
-    public BaseResponse<List<SpaceLevel>> listSpaceLevel(){
+    public BaseResponse<List<SpaceLevel>> listSpaceLevel() {
         List<SpaceLevel> spaceLevelList = Arrays.stream(SpaceLevelEnum.values())
                 .map(spaceLevelEnum -> new SpaceLevel(
                         spaceLevelEnum.getValue(),
                         spaceLevelEnum.getText(),
                         spaceLevelEnum.getMaxCount(),
                         spaceLevelEnum.getMaxSize()
-                )).collect(Collectors.toList());
+                ))
+                .collect(Collectors.toList());
         return ResultUtils.success(spaceLevelList);
     }
 

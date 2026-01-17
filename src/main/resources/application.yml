@@ -52,3 +52,6 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.wang.wangpicture.controller
+#阿里云API配置
+aliYunAi:
+  apiKey: xxxxxxx

@@ -26,6 +26,13 @@ public class SpaceLevel {
      */
     private long  maxSize;
 
+    public SpaceLevel(int value, String text, long maxCount, long maxSize) {
+        this.value = value;
+        this.text = text;
+        this.maxCount = maxCount;
+        this.maxSize = maxSize;
+    }
+
     public int getValue() {
         return value;
     }

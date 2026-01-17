@@ -1,11 +1,17 @@
 package com.wang.wangpicture.controller;
 
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.sun.corba.se.impl.logging.POASystemException;
 import com.wang.wangpicture.annotation.AuthCheck;
+import com.wang.wangpicture.api.aliyun.AliYunAiApi;
+import com.wang.wangpicture.api.aliyun.model.CreateOutPaintingTaskRequest;
+import com.wang.wangpicture.api.aliyun.model.CreateOutPaintingTaskResponse;
+import com.wang.wangpicture.api.aliyun.model.GetOutPaintingTaskResponse;
 import com.wang.wangpicture.api.imageSearch.ImageSearchApiFacade;
 import com.wang.wangpicture.api.imageSearch.model.ImageSearchResult;
 import com.wang.wangpicture.common.BaseResponse;
@@ -28,6 +34,7 @@ import com.wang.wangpicture.service.SpaceService;
 import com.wang.wangpicture.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.util.DigestUtils;
@@ -90,6 +97,9 @@ public class PictureController {
      * 热点阈值：5秒内访问超过 10 次就算热点（根据实际流量调整）
      */
     private static final int HOT_THRESHOLD = 10;
+    @Autowired
+    private AliYunAiApi aliYunAiApi;
+
     /**
      * 上传图片
      * @param multipartFile 文件
@@ -499,5 +509,35 @@ public class PictureController {
         return ResultUtils.success(pictureVoList);
     }
 
+    /**
+     * 创建AI扩图任务
+     *
+     * @param
+     * @param request
+     * @return
+     */
+    @PostMapping("/out_painting/create_task")
+    public BaseResponse<CreateOutPaintingTaskResponse> createPictureOutPaintingTask(@RequestBody CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest,
+                                                                                    HttpServletRequest request) {
+        if (createPictureOutPaintingTaskRequest == null || createPictureOutPaintingTaskRequest.getPictureId() == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        CreateOutPaintingTaskResponse response = pictureService.createPictureOutPaintingTask(createPictureOutPaintingTaskRequest, loginUser);
+        return ResultUtils.success(response);
+    }
+
+    /**
+     * 查询AI扩图任务
+     *
+     * @param taskId
+     * @return
+     */
+    @GetMapping("/out_painting/get_task")
+    public BaseResponse<GetOutPaintingTaskResponse> getPictureOutPaintingTaskStatus(String taskId) {
+        ThrowUtils.throwIf(StrUtil.isBlank(taskId), ErrorCode.PARAMS_ERROR);
+        GetOutPaintingTaskResponse outPaintingTask = aliYunAiApi.getOutPaintingTask(taskId);
+        return ResultUtils.success(outPaintingTask);
+    }
     }
 
