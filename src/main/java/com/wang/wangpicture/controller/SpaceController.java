@@ -202,21 +202,21 @@ public class SpaceController {
 
     }
 
-//    /**
-//     * 获取所有的空间级别，便于前端展示
-//     * @return
-//     */
-//    @GetMapping("/list/level")
-//    public BaseResponse<List<SpaceLevel>> listSpaceLevel(){
-//        List<SpaceLevel> spaceLevelList = Arrays.stream(SpaceLevelEnum.values())
-//                .map(spaceLevelEnum -> new SpaceLevel(
-//                        spaceLevelEnum.getValue(),
-//                        spaceLevelEnum.getText(),
-//                        spaceLevelEnum.getMaxCount(),
-//                        spaceLevelEnum.getMaxSize()
-//                )).collect(Collectors.toList());
-//        return ResultUtils.success(spaceLevelList);
-//    }
-//
+    /**
+     * 获取所有的空间级别，便于前端展示
+     * @return
+     */
+    @GetMapping("/list/level")
+    public BaseResponse<List<SpaceLevel>> listSpaceLevel(){
+        List<SpaceLevel> spaceLevelList = Arrays.stream(SpaceLevelEnum.values())
+                .map(spaceLevelEnum -> new SpaceLevel(
+                        spaceLevelEnum.getValue(),
+                        spaceLevelEnum.getText(),
+                        spaceLevelEnum.getMaxCount(),
+                        spaceLevelEnum.getMaxSize()
+                )).collect(Collectors.toList());
+        return ResultUtils.success(spaceLevelList);
+    }
+
 
 }

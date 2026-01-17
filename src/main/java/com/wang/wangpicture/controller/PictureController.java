@@ -136,20 +136,7 @@ public class PictureController {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"图片不存在");
         }
         User loginUser=userService.getLoginUser(request);
-        Long id=deleteRequest.getId();
-        //判断是否存在
-        Picture oldPicture = pictureService.getById(id);
-        ThrowUtils.throwIf(oldPicture==null,ErrorCode.NOT_FOUND_ERROR);
-        //仅本人或者管理员可以删除
-        //仅本人或管理员可编辑
-        if(!oldPicture.getUserId().equals(loginUser.getId())&&!userService.isAdmin(loginUser)){
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-        }
-        //操作数据库
-        boolean result = pictureService.removeById(id);
-        ThrowUtils.throwIf(!result,ErrorCode.OPERATION_ERROR);
-        //清理图片
-        pictureService.clearPictureFile(oldPicture);
+        pictureService.deletePicture(deleteRequest.getId(),loginUser);
         return ResultUtils.success(true);
     }
 
@@ -340,6 +327,7 @@ public class PictureController {
      * @param request
      * @return
      */
+    @Deprecated
     @PostMapping("/list/page/vo/cache")
     public BaseResponse<Page<PictureVo>> listPictureVoByPageWithCache(@RequestBody PictureQueryRequest pictureQueryRequest,
                                                                       HttpServletRequest request) {
@@ -421,28 +409,9 @@ public class PictureController {
         if(pictureEditRequest==null || pictureEditRequest.getId()<=0){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR);
         }
-        //在此处将实体类和DTO进行转换
-        Picture picture=new Picture();
-        BeanUtils.copyProperties(pictureEditRequest,picture);
+        User loginUser = userService.getLoginUser(request);
 
-        //设置编辑时间
-        picture.setEditTime(new Date());
-        //数据校验
-        pictureService.validPicture(picture);
-        User loginUser=userService.getLoginUser(request);
-        //自动填充数据
-        pictureService.fillReviewParams(picture,loginUser);
-        //判断是否存在
-        long id=pictureEditRequest.getId();
-        Picture oldPicture = pictureService.getById(id);
-        ThrowUtils.throwIf(oldPicture==null,ErrorCode.NOT_FOUND_ERROR);
-        //仅本人或管理员可编辑
-        if(!oldPicture.getId().equals(loginUser.getId())&&!userService.isAdmin(loginUser)){
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-        }
-        //操作数据库
-        boolean result = pictureService.updateById(picture);
-        ThrowUtils.throwIf(!result,ErrorCode.OPERATION_ERROR);
+        pictureService.editPicture(pictureEditRequest,loginUser);
         return ResultUtils.success(true);
 
     }

@@ -467,7 +467,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
             ThrowUtils.throwIf(!update,ErrorCode.OPERATION_ERROR,"额度更新失败");
             return true;
         });
-        //操作数据库
+
 
 
 
