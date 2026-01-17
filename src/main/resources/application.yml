@@ -2,17 +2,35 @@ server:
   port: 8123
   servlet:
     context-path: /api
+    #cookie 30天过期
+    session:
+      cookie:
+        max-age: 2592000
 spring:
     application:
+
       name: wang-picture
     datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/wang-picture?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+      url: jdbc:mysql://localhost:3306/wang-picture??useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
       password: Wyw202007@
       username: root
+    #Redis
+    redis:
+      database: 0
+      host: localhost
+      port: 6379
+      connect-timeout: 5000
     servlet:
        multipart:
          max-file-size: 2MB
+    profiles:
+      active: local
+    #session配置
+    session:
+      store-type: redis
+      #设置过期时间30天之后过期
+      timeout: 259200
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false

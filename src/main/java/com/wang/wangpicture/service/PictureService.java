@@ -97,6 +97,18 @@ public interface PictureService extends IService<Picture> {
     */
     void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
 
+    /**
+     * 通过颜色搜图
+     * @param spaceId
+     * @param picColor
+     * @param loginUser
+     * @return
+     */
     List<PictureVo> searchPictureByColor(Long spaceId, String picColor, User loginUser);
 
+    /**
+     * 清理图片文件
+     * @param oldPicture
+     */
+    void clearPictureFile(Picture oldPicture);
 }

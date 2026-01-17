@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +46,7 @@ public abstract class PictureUploadTemplate {
      * @return
      */
     public UploadPictureResult uploadPicture(Object inputSource, String uploadPathPrefix) {
+
         // 1. 校验图片
         validPicture(inputSource);
         // 2. 图片上传地址
@@ -93,7 +95,7 @@ public abstract class PictureUploadTemplate {
      * 处理输入源并生成本地临时文件
      * @param inputSource
      */
-    protected abstract void processFile(Object inputSource,File file);
+    protected abstract void processFile(Object inputSource,File file) throws IOException;
 
     /**
      * 校验输入源（本地文件或URL）

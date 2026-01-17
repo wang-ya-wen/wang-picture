@@ -39,7 +39,22 @@ public class SpaceController {
     @Resource
     private SpaceService spaceService;
 
-
+    /**
+     * 更新空间
+     * @param spaceAddRequest
+     * @return
+     */
+    @PostMapping("/add")
+//    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Long> addSpace(@RequestBody SpaceAddRequest spaceAddRequest, HttpServletRequest request){
+        if(spaceAddRequest==null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        //判断用户是否可以创建空间即是否已经拥有一个空间，如果有就拒绝
+        User loginUser=userService.getLoginUser(request);
+        long addSpace = spaceService.addSpace(spaceAddRequest, loginUser);
+        return ResultUtils.success(addSpace);
+    }
     /**
      * 删除空间
      * @param deleteRequest
