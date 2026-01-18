@@ -29,6 +29,18 @@ public class SpaceQueryRequest extends PageRequest implements Serializable {
      * 空间级别
      */
     private Integer spaceLevel;
+    /**
+     * 空间类型
+     */
+    private Integer spaceType;
+
+    public Integer getSpaceType() {
+        return spaceType;
+    }
+
+    public void setSpaceType(Integer spaceType) {
+        this.spaceType = spaceType;
+    }
 
     public Long getId() {
         return id;

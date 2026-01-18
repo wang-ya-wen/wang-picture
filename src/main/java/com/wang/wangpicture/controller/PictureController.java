@@ -539,5 +539,7 @@ public class PictureController {
         GetOutPaintingTaskResponse outPaintingTask = aliYunAiApi.getOutPaintingTask(taskId);
         return ResultUtils.success(outPaintingTask);
     }
+
+
     }
 

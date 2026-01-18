@@ -18,6 +18,18 @@ public class SpaceAddRequest implements Serializable {
      * 空间级别
      */
     private String spaceLevel;
+    /**
+     * 空间类型
+     */
+    private Integer spaceType;
+
+    public Integer getSpaceType() {
+        return spaceType;
+    }
+
+    public void setSpaceType(Integer spaceType) {
+        this.spaceType = spaceType;
+    }
 
     public String getSpaceName() {
         return spaceName;

@@ -16,6 +16,7 @@ import com.wang.wangpicture.model.entity.User;
 import com.wang.wangpicture.model.vo.space.analyze.SpaceCategoryAnalyzeResponse;
 import com.wang.wangpicture.model.vo.space.analyze.SpaceSizeAnalyzeResponse;
 import com.wang.wangpicture.model.vo.space.analyze.SpaceUsageAnalyzeResponse;
+import com.wang.wangpicture.model.vo.space.analyze.SpaceUserAnalyzeResponse;
 import com.wang.wangpicture.service.PictureService;
 import com.wang.wangpicture.service.SpaceAnalyzeService;
 import com.wang.wangpicture.service.SpaceService;
@@ -118,12 +119,13 @@ public class SpaceAnalyzeServiceImpl extends ServiceImpl<SpaceMapper, Space>
         //查询并转换结果
         return pictureService.getBaseMapper().selectMaps(queryWrapper)
                 .stream()
-                .map(result->{
-                    String category=(String) result.get("category");
-                    Long count=(Long) result.get("count");
-                    Long totalSize=(Long) result.get("totalSize");
-                    return new SpaceCategoryAnalyzeResponse(count,category,totalSize);
-                }).collect(Collectors.toList());
+                .map(result -> {
+                    String category = (String) result.get("category");
+                    Long count = ((Number) result.get("count")).longValue();
+                    Long totalSize = ((Number) result.get("totalSize")).longValue();
+                    return new SpaceCategoryAnalyzeResponse(count, category, totalSize);
+                })
+                .collect(Collectors.toList());
 
 
     }
@@ -183,6 +185,62 @@ public class SpaceAnalyzeServiceImpl extends ServiceImpl<SpaceMapper, Space>
 
 
     }
+
+    @Override
+    public List<SpaceUserAnalyzeResponse> getSpaceUserAnalyze(SpaceUserAnalyzeRequest spaceUserAnalyzeRequest, User loginUser) {
+        ThrowUtils.throwIf(spaceUserAnalyzeRequest == null, ErrorCode.PARAMS_ERROR);
+        //校验权限
+        checkSpaceAnalyzeAuth(spaceUserAnalyzeRequest, loginUser);
+        QueryWrapper<Picture> queryWrapper=new QueryWrapper<>();
+        fillAnalyzeQueryWrapper(spaceUserAnalyzeRequest,queryWrapper);
+        //补充用户id查询
+        Long userId = spaceUserAnalyzeRequest.getUserId();
+        queryWrapper.eq(ObjUtil.isNotNull(userId),"userId",loginUser.getId());
+        //补充分析维度：每日、每周、每月
+        String timeDimension = spaceUserAnalyzeRequest.getTimeDimension();
+        switch(timeDimension){
+            case "day":
+                queryWrapper.select("DATE_FORMAT(createTime,'%Y-%m-%d') as period", "count(*) as count");
+                queryWrapper.groupBy("date");
+                break;
+            case "week":
+                queryWrapper.select("YEARWEEK(createTime) as period", "count(*) as count");
+                queryWrapper.groupBy("date");
+                break;
+            case "month":
+                queryWrapper.select("DATE_FORMAT(createTime,'%Y-%m') as period", "count(*) as count");
+                queryWrapper.groupBy("date");
+                break;
+            default:
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "不支持的查询维度");
+        }
+        //分组排序
+        queryWrapper.groupBy("period").orderByAsc("period");
+        //查询并封装结果//查询并转换结果
+        return pictureService.getBaseMapper().selectMaps(queryWrapper)
+                .stream()
+                .map(result->{
+                    String period=(String) result.get("period");
+                    Long count=(Long) result.get("count");
+                    return new SpaceUserAnalyzeResponse(period,count);
+                }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Space> getSpaceRankAnalyze(SpaceRankAnalyzeRequest spaceRankAnalyzeRequest, User loginUser) {
+        ThrowUtils.throwIf(spaceRankAnalyzeRequest == null, ErrorCode.PARAMS_ERROR);
+        //校验权限，仅管理员可以查看
+        ThrowUtils.throwIf(!userService.isAdmin(loginUser), ErrorCode.NO_AUTH_ERROR);
+        //查询所有空间//查询空间列表
+        QueryWrapper<Space> queryWrapper=new QueryWrapper<>();
+        queryWrapper.select("id","spaceName","userId","totalSize");
+        queryWrapper.orderByDesc("totalSize");
+        queryWrapper.last("limit "+spaceRankAnalyzeRequest.getTopN());
+        List<Space> spaceList=spaceService.list(queryWrapper);
+        return spaceList;
+
+    }
+
 
     /**
      * 校验分析空间的权限

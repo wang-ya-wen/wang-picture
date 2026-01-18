@@ -7,36 +7,34 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * 空间图片大小分析响应
+ * 空间用户上传行为分析
  */
-@Data
-@AllArgsConstructor
+
 @NoArgsConstructor
-public class SpaceSizeAnalyzeResponse implements Serializable {
-
+@Data
+public class SpaceUserAnalyzeResponse implements Serializable {
     /**
-     * 图片大小范围
+     * 时间区间
      */
-    private String sizeRange;
-
+    private String period;
     /**
-     * 图片数量
+     * 上传数量
      */
     private Long count;
 
     private static final long serialVersionUID = 1L;
 
-    public SpaceSizeAnalyzeResponse(String sizeRange, Long count) {
-        this.sizeRange = sizeRange;
+    public SpaceUserAnalyzeResponse(String period, Long count) {
+        this.period = period;
         this.count = count;
     }
 
-    public String getSizeRange() {
-        return sizeRange;
+    public String getPeriod() {
+        return period;
     }
 
-    public void setSizeRange(String sizeRange) {
-        this.sizeRange = sizeRange;
+    public void setPeriod(String period) {
+        this.period = period;
     }
 
     public Long getCount() {

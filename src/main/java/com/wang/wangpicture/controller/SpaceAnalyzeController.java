@@ -10,15 +10,15 @@ import com.wang.wangpicture.exception.BusinessException;
 import com.wang.wangpicture.exception.ErrorCode;
 import com.wang.wangpicture.exception.ThrowUtils;
 import com.wang.wangpicture.model.dto.space.*;
-import com.wang.wangpicture.model.dto.space.analyze.SpaceCategoryAnalyzeRequest;
-import com.wang.wangpicture.model.dto.space.analyze.SpaceTagAnalyzeRequest;
-import com.wang.wangpicture.model.dto.space.analyze.SpaceUsageAnalyzeRequest;
+import com.wang.wangpicture.model.dto.space.analyze.*;
 import com.wang.wangpicture.model.entity.Space;
 import com.wang.wangpicture.model.entity.User;
 import com.wang.wangpicture.model.enums.SpaceLevelEnum;
 import com.wang.wangpicture.model.vo.SpaceVo;
 import com.wang.wangpicture.model.vo.space.analyze.SpaceCategoryAnalyzeResponse;
+import com.wang.wangpicture.model.vo.space.analyze.SpaceSizeAnalyzeResponse;
 import com.wang.wangpicture.model.vo.space.analyze.SpaceUsageAnalyzeResponse;
+import com.wang.wangpicture.model.vo.space.analyze.SpaceUserAnalyzeResponse;
 import com.wang.wangpicture.service.PictureService;
 import com.wang.wangpicture.service.SpaceAnalyzeService;
 import com.wang.wangpicture.service.SpaceService;
@@ -82,4 +82,47 @@ public class SpaceAnalyzeController {
         return ResultUtils.success(spaceCategoryAnalyzeResponse);
     }
 
+    /**
+     * 获取空间大小分析
+     * @param spaceSizeAnalyzeRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/size")
+    public BaseResponse<List<SpaceSizeAnalyzeResponse>> getSpaceSizeAnalyze(SpaceSizeAnalyzeRequest spaceSizeAnalyzeRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(spaceSizeAnalyzeRequest == null, ErrorCode.PARAMS_ERROR);
+        User loginUser = userService.getLoginUser(request);
+        List<SpaceSizeAnalyzeResponse> resultList = spaceAnalyzeService.getSpaceSizeAnalyze(spaceSizeAnalyzeRequest, loginUser);
+        return ResultUtils.success(resultList);
+    }
+
+    /**
+     * 获取空间用户行为分析
+     * @param spaceUserAnalyzeRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/user")
+    public BaseResponse<List<SpaceUserAnalyzeResponse>> getSpaceUserAnalyze(SpaceUserAnalyzeRequest spaceUserAnalyzeRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(spaceUserAnalyzeRequest == null, ErrorCode.PARAMS_ERROR);
+        User loginUser = userService.getLoginUser(request);
+        List<SpaceUserAnalyzeResponse> resultList = spaceAnalyzeService.getSpaceUserAnalyze(spaceUserAnalyzeRequest, loginUser);
+        return ResultUtils.success(resultList);
+    }
+
+    /**
+     * 获取空间使用排行前N的列表
+     * @param spaceRankAnalyzeRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/rank")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<List<Space>> getSpaceRankAnalyze(SpaceRankAnalyzeRequest spaceRankAnalyzeRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(spaceRankAnalyzeRequest == null, ErrorCode.PARAMS_ERROR);
+        User loginUser = userService.getLoginUser(request);
+        List<Space> resultList = spaceAnalyzeService.getSpaceRankAnalyze(spaceRankAnalyzeRequest, loginUser);
+        return ResultUtils.success(resultList);
+    }
 }
+

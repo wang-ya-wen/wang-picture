@@ -5,16 +5,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wang.wangpicture.model.dto.space.SpaceAddRequest;
 import com.wang.wangpicture.model.dto.space.SpaceQueryRequest;
-import com.wang.wangpicture.model.dto.space.analyze.SpaceCategoryAnalyzeRequest;
-import com.wang.wangpicture.model.dto.space.analyze.SpaceSizeAnalyzeRequest;
-import com.wang.wangpicture.model.dto.space.analyze.SpaceTagAnalyzeRequest;
-import com.wang.wangpicture.model.dto.space.analyze.SpaceUsageAnalyzeRequest;
+import com.wang.wangpicture.model.dto.space.analyze.*;
 import com.wang.wangpicture.model.entity.Space;
 import com.wang.wangpicture.model.entity.User;
 import com.wang.wangpicture.model.vo.SpaceVo;
 import com.wang.wangpicture.model.vo.space.analyze.SpaceCategoryAnalyzeResponse;
 import com.wang.wangpicture.model.vo.space.analyze.SpaceSizeAnalyzeResponse;
 import com.wang.wangpicture.model.vo.space.analyze.SpaceUsageAnalyzeResponse;
+import com.wang.wangpicture.model.vo.space.analyze.SpaceUserAnalyzeResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -41,19 +39,31 @@ public interface SpaceAnalyzeService extends IService<Space> {
      */
     List<SpaceCategoryAnalyzeResponse> getSpaceCategoryAnalyze(SpaceCategoryAnalyzeRequest spaceCategoryAnalyzeRequest, User loginUser);
 
-        /**
+    /**
      * 获取空间标签分析
      *
      * @param spaceTagAnalyzeRequest
      * @param loginUser
      * @return
      */
-        List<SpaceCategoryAnalyzeResponse> getSpaceTagAnalyze(SpaceTagAnalyzeRequest spaceTagAnalyzeRequest, User loginUser);
+    List<SpaceCategoryAnalyzeResponse> getSpaceTagAnalyze(SpaceTagAnalyzeRequest spaceTagAnalyzeRequest, User loginUser);
 
     /**
      * 获取空间图片大小分析
-      */
+     */
     List<SpaceSizeAnalyzeResponse> getSpaceSizeAnalyze(SpaceSizeAnalyzeRequest spaceSizeAnalyzeRequest, User loginUser);
 
+    /**
+     * 获取空间用户行为分析
+     */
+    List<SpaceUserAnalyzeResponse> getSpaceUserAnalyze(SpaceUserAnalyzeRequest spaceUserAnalyzeRequest, User loginUser);
+
+    /**
+     * 获取空间使用排行前N的列表
+     * @param spaceRankAnalyzeRequest
+     * @param loginUser
+     * @return
+     */
+    List<Space> getSpaceRankAnalyze(SpaceRankAnalyzeRequest spaceRankAnalyzeRequest, User loginUser);
 
 }

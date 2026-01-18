@@ -28,6 +28,12 @@ public class SpaceCategoryAnalyzeResponse implements Serializable {
     private Long totalSize;
     private final static long serialVersionUID = 1L;
 
+    public SpaceCategoryAnalyzeResponse(Long usedCount, String category, Long totalSize) {
+        this.usedCount = usedCount;
+        this.category = category;
+        this.totalSize = totalSize;
+    }
+
     public Long getUsedCount() {
         return usedCount;
     }
