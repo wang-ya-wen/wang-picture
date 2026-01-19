@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.annotation.*;
 import com.wang.wangpicture.model.entity.Space;
 import org.springframework.beans.BeanUtils;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 public class SpaceVo implements Serializable {
         /**
          * id
@@ -24,6 +27,18 @@ public class SpaceVo implements Serializable {
          * 空间类型
          */
         private Integer spaceType;
+        /**
+         * 权限列表
+         */
+        private List<String> permissionList=new ArrayList<>();
+
+    public List<String> getPermissionList() {
+        return permissionList;
+    }
+
+    public void setPermissionList(List<String> permissionList) {
+        this.permissionList = permissionList;
+    }
 
     public Integer getSpaceType() {
         return spaceType;

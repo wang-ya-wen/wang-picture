@@ -8,6 +8,7 @@ import com.wang.wangpicture.constant.UserConstant;
 import com.wang.wangpicture.exception.BusinessException;
 import com.wang.wangpicture.exception.ErrorCode;
 import com.wang.wangpicture.exception.ThrowUtils;
+import com.wang.wangpicture.manager.auth.SpaceUserAuthManager;
 import com.wang.wangpicture.model.dto.space.*;
 import com.wang.wangpicture.model.entity.Space;
 import com.wang.wangpicture.model.entity.User;
@@ -18,6 +19,7 @@ import com.wang.wangpicture.service.SpaceService;
 import com.wang.wangpicture.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +40,8 @@ public class SpaceController {
     private PictureService pictureService;
     @Resource
     private SpaceService spaceService;
+    @Autowired
+    private SpaceUserAuthManager spaceUserAuthManager;
 
     /**
      * 更新空间
@@ -133,9 +137,13 @@ public class SpaceController {
         //查询数据库
         Space space=spaceService.getById(id);
         ThrowUtils.throwIf(space==null,ErrorCode.NOT_FOUND_ERROR);
-
+        SpaceVo spaceVo = spaceService.getSpaceVo(space, request);
+        User loginUser = userService.getLoginUser(request);
+        //获取权限列表
+        List<String> permissionList = spaceUserAuthManager.getPermissionList(space, loginUser);
+        spaceVo.setPermissionList(permissionList);
         //获取封装类
-        return ResultUtils.success(spaceService.getSpaceVo(space,request));
+        return ResultUtils.success(spaceVo);
     }
 
     /**

@@ -10,6 +10,8 @@ import com.wang.wangpicture.constant.UserConstant;
 import com.wang.wangpicture.exception.BusinessException;
 import com.wang.wangpicture.exception.ErrorCode;
 import com.wang.wangpicture.exception.ThrowUtils;
+import com.wang.wangpicture.manager.auth.annotation.SaSpaceCheckPermission;
+import com.wang.wangpicture.manager.auth.model.SpaceUserPermissionConstant;
 import com.wang.wangpicture.model.dto.space.*;
 import com.wang.wangpicture.model.dto.spaceUser.SpaceUserAddRequest;
 import com.wang.wangpicture.model.dto.spaceUser.SpaceUserEditRequest;
@@ -56,6 +58,7 @@ public class SpaceUserController {
      * @return
      */
     @PostMapping("/add")
+    @SaSpaceCheckPermission(value = SpaceUserPermissionConstant.SPACE_USER_MANAGE)
 //    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Long> addSpaceUser(@RequestBody SpaceUserAddRequest spaceUserAddRequest) {
         if (spaceUserAddRequest == null) {
@@ -73,6 +76,8 @@ public class SpaceUserController {
      * @return
      */
     @PostMapping("/delete")
+    @SaSpaceCheckPermission(value = SpaceUserPermissionConstant.SPACE_USER_MANAGE)
+
     public BaseResponse<Boolean> deleteSpaceUser(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "空间不存在");
@@ -96,6 +101,8 @@ public class SpaceUserController {
      * @return
      */
     @PostMapping("/get")
+    @SaSpaceCheckPermission(value = SpaceUserPermissionConstant.SPACE_USER_MANAGE)
+
     public BaseResponse<SpaceUser> getSpaceUser(@RequestBody SpaceUserQueryRequest spaceUserQueryRequest) {
         ThrowUtils.throwIf(spaceUserQueryRequest == null, ErrorCode.PARAMS_ERROR);
         Long spaceId = spaceUserQueryRequest.getSpaceId();
@@ -109,6 +116,8 @@ public class SpaceUserController {
     }
 
     @PostMapping("/list")
+    @SaSpaceCheckPermission(value = SpaceUserPermissionConstant.SPACE_USER_MANAGE)
+
     public BaseResponse<List<SpaceUserVo>> listSpaceUser(@RequestBody SpaceUserQueryRequest spaceUserQueryRequest) {
         ThrowUtils.throwIf(spaceUserQueryRequest == null, ErrorCode.PARAMS_ERROR);
         List<SpaceUser> spaceUserList = spaceUserService.list(spaceUserService.getQueryWrapper(spaceUserQueryRequest));
@@ -124,6 +133,8 @@ public class SpaceUserController {
      * @return
      */
     @PostMapping("/edit")
+    @SaSpaceCheckPermission(value = SpaceUserPermissionConstant.SPACE_USER_MANAGE)
+
     public BaseResponse<Boolean> editSpaceUser(@RequestBody SpaceUserEditRequest spaceUserEditRequest, HttpServletRequest request) {
         if (spaceUserEditRequest == null || spaceUserEditRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR);

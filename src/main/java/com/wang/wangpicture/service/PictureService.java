@@ -98,7 +98,13 @@ public interface PictureService extends IService<Picture> {
     * @param loginUser
     */
     void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
-
+    /**
+     * 批量编辑图片
+     *
+     * @param pictureEditByBatchRequest
+     * @param loginUser
+     */
+    void editPictureByBatch(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser);
     /**
      * 通过颜色搜图
      * @param spaceId
@@ -117,7 +123,7 @@ public interface PictureService extends IService<Picture> {
     /**
      * 扩图请求
      *
-     * @param createOutPaintingTaskRequest
+     * @param createPictureOutPaintingTaskRequest
      * @param loginUser
      */
     CreateOutPaintingTaskResponse createPictureOutPaintingTask(CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest, User loginUser);

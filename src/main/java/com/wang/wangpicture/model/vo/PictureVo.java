@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -97,6 +98,19 @@ public class PictureVo implements Serializable {
      * 创建用户信息
      */
     private UserVo user;
+    /**
+     * 权限列表
+     */
+    private List<String> permissionList=new ArrayList<>();
+
+    public List<String> getPermissionList() {
+        return permissionList;
+    }
+
+    public void setPermissionList(List<String> permissionList) {
+        this.permissionList = permissionList;
+    }
+
     /**
      * 封装类转对象
      */

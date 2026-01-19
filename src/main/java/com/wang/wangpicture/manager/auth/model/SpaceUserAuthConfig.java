@@ -22,4 +22,20 @@ public class SpaceUserAuthConfig implements Serializable {
     private List<SpaceUserRole> roles;
 
     private static final long serialVersionUID = 1L;
+
+    public List<SpaceUserPermission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<SpaceUserPermission> permissions) {
+        this.permissions = permissions;
+    }
+
+    public List<SpaceUserRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<SpaceUserRole> roles) {
+        this.roles = roles;
+    }
 }
