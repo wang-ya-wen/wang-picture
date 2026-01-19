@@ -113,3 +113,5 @@ create table if not exists space_user
     INDEX idx_spaceId (spaceId),
     INDEX idx_userId (userId)
 ) comment '空间用户关联' collate =utf8mb4_unicode_ci;
+
+ALTER TABLE picture CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

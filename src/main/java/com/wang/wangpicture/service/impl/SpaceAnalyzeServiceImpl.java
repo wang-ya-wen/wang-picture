@@ -260,7 +260,7 @@ public class SpaceAnalyzeServiceImpl extends ServiceImpl<SpaceMapper, Space>
             ThrowUtils.throwIf(spaceId == null, ErrorCode.PARAMS_ERROR);
             Space space = spaceService.getById(spaceId);
             ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR, "空间不存在");
-            spaceService.checkSpaceAuth(space, loginUser);
+            spaceService.checkSpaceAuth(loginUser,space);
 
         }
 

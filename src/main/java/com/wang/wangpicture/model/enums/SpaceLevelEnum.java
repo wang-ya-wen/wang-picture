@@ -7,6 +7,7 @@ import lombok.Getter;
  * 空间级别枚举
  */
 @Getter
+
 public enum SpaceLevelEnum {
 
     COMMON("普通版", 0, 100, 100L * 1024 * 1024),
@@ -65,5 +66,4 @@ public enum SpaceLevelEnum {
     public long getMaxSize() {
         return maxSize;
     }
-
 }

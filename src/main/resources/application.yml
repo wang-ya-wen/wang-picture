@@ -9,7 +9,7 @@ server:
 spring:
     application:
 
-      name: wang-picture
+      name: wang_picture
     datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
       url: jdbc:mysql://localhost:3306/wang-picture??useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
@@ -31,11 +31,49 @@ spring:
       store-type: redis
       #设置过期时间30天之后过期
       timeout: 259200
+      #空间图片分表
+    shardingsphere:
+      # 1. enabled 必须放在最外层，不能放在 datasource 里
+      enabled: true
+
+      # 2. 【核心修复】必须加上这个 mode 配置，否则无法启动！
+      mode:
+        type: Standalone
+        repository:
+          type: JDBC
+
+      datasource:
+        names: wang_picture
+        wang_picture:
+          type: com.zaxxer.hikari.HikariDataSource
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          # 3. 【修复JDBC URL】你原来的 url 里有两个问号 (??)，我帮你改成了一个 (?)
+          url: jdbc:mysql://localhost:3306/wang-picture?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          username: root
+          password: Wyw202007@
+      rules:
+        sharding:
+          tables:
+            picture:
+              actual-data-nodes: wang_picture.picture
+              table-strategy:
+                standard:
+                  sharding-column: spaceId
+                  sharding-algorithm-name: picture_sharding_algorithm
+          sharding-algorithms:
+            picture_sharding_algorithm:
+              type: CLASS_BASED
+              props:
+                strategy: standard
+                algorithmClassName: com.wang.wangpicture.manager.sharding.PictureShardingAlgorithm
+      props:
+        sql-show: true
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    global-config:
+  global-config:
+      enable_sql_runner: true
       db-config:
         logic-delete-field: isDelete
         logic-delete-value: true

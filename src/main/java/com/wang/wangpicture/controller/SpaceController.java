@@ -79,7 +79,7 @@ public class SpaceController {
 //        if(!oldSpace.getId().equals(loginUser.getId())&&!userService.isAdmin(loginUser)){
 //            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
 //        }
-        spaceService.checkSpaceAuth(oldSpace, loginUser);
+        spaceService.checkSpaceAuth( loginUser,oldSpace);
         //操作数据库
         boolean result = spaceService.removeById(id);
         ThrowUtils.throwIf(!result,ErrorCode.OPERATION_ERROR);
@@ -204,7 +204,7 @@ public class SpaceController {
 //        if(!oldSpace.getId().equals(loginUser.getId())&&!userService.isAdmin(loginUser)){
 //            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
 //        }
-        spaceService.checkSpaceAuth(oldSpace, loginUser);
+        spaceService.checkSpaceAuth(loginUser,oldSpace);
         //操作数据库
         boolean result = spaceService.updateById(space);
         ThrowUtils.throwIf(!result,ErrorCode.OPERATION_ERROR);

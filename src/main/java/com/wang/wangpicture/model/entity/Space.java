@@ -5,11 +5,15 @@ import com.baomidou.mybatisplus.annotation.*;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 
  * @TableName space
  */
+
+@Setter
 @TableName(value ="space")
 @Data
 public class Space implements Serializable {
@@ -81,13 +85,6 @@ public class Space implements Serializable {
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
-    public Integer getSpaceType() {
-        return spaceType;
-    }
-
-    public void setSpaceType(Integer spaceType) {
-        this.spaceType = spaceType;
-    }
 
     public Long getId() {
         return id;
@@ -113,6 +110,14 @@ public class Space implements Serializable {
         this.spaceLevel = spaceLevel;
     }
 
+    public Integer getSpaceType() {
+        return spaceType;
+    }
+
+    public void setSpaceType(Integer spaceType) {
+        this.spaceType = spaceType;
+    }
+
     public Long getMaxSize() {
         return maxSize;
     }
@@ -127,6 +132,14 @@ public class Space implements Serializable {
 
     public void setMaxCount(Long maxCount) {
         this.maxCount = maxCount;
+    }
+
+    public Long getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(Long totalCount) {
+        this.totalCount = totalCount;
     }
 
     public Long getTotalSize() {
@@ -167,21 +180,5 @@ public class Space implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public Byte getIsDelete() {
-        return isDelete;
-    }
-
-    public void setIsDelete(Byte isDelete) {
-        this.isDelete = isDelete;
-    }
-
-    public Long getTotalCount() {
-        return totalCount;
-    }
-
-    public void setTotalCount(Long totalCount) {
-        this.totalCount = totalCount;
     }
 }

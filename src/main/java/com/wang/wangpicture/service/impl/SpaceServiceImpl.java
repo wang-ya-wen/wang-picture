@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wang.wangpicture.exception.BusinessException;
 import com.wang.wangpicture.exception.ErrorCode;
 import com.wang.wangpicture.exception.ThrowUtils;
+import com.wang.wangpicture.manager.sharding.DynamicShardingManager;
 import com.wang.wangpicture.mapper.SpaceMapper;
 import com.wang.wangpicture.model.dto.space.SpaceAddRequest;
 import com.wang.wangpicture.model.dto.space.SpaceQueryRequest;
@@ -27,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.BuilderException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -47,9 +49,12 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
     private UserService userService;
     @Resource
     private TransactionTemplate transactionTemplate;
-    @Autowired
+    @Resource
     private SpaceUserService spaceUserService;
-
+    //为了方便部署，暂时不使用
+//    @Resource
+//    @Lazy
+//    private DynamicShardingManager dynamicShardingManager;
     /**
      * 创建空间
      * @param spaceAddRequest
@@ -58,63 +63,60 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
      */
     @Override
     public long addSpace(SpaceAddRequest spaceAddRequest, User loginUser) {
-        //1.校验参数填充默认值
-        Space space=new Space();
-        BeanUtils.copyProperties(spaceAddRequest,space);
-        if(StrUtil.isBlank(space.getSpaceName())){
+        // 1. 填充参数默认值
+        // 转换实体类和 DTO
+        Space space = new Space();
+        BeanUtils.copyProperties(spaceAddRequest, space);
+        if (StrUtil.isBlank(space.getSpaceName())) {
             space.setSpaceName("默认空间");
         }
-        if(space.getSpaceLevel()==null){
+        if (space.getSpaceLevel() == null) {
             space.setSpaceLevel(SpaceLevelEnum.COMMON.getValue());
-
         }
-        if(space.getSpaceType()==null){
+        if (space.getSpaceType() == null) {
             space.setSpaceType(SpaceTypeEnum.PRIVATE.getValue());
         }
-        //填充容量和大小
+        // 填充容量和大小
         this.fillSpaceBySpaceLevel(space);
-        //2.校验参数
-        this.validSpace(space,true);
-        //3.校验权限，非管理员只能创建普通级别的空间
+        // 2. 校验参数
+        this.validSpace(space, true);
+        // 3. 校验权限，非管理员只能创建普通级别的空间
         Long userId = loginUser.getId();
         space.setUserId(userId);
-        if(SpaceLevelEnum.COMMON.getValue()!=space.getSpaceLevel()&&!userService.isAdmin(loginUser)){
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR,"无权限创建指定级别的空间");
+        if (SpaceLevelEnum.COMMON.getValue() != space.getSpaceLevel() && !userService.isAdmin(loginUser)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无权限创建指定级别的空间");
         }
-        //4.控制同一用户只能创建一个私有空间,以及一个团队空间
-        String lock=String.valueOf(userId).intern();
-        synchronized (lock){
+        // 4. 控制同一用户只能创建一个私有空间、以及一个团队空间
+        String lock = String.valueOf(userId).intern();
+        synchronized (lock) {
             Long newSpaceId = transactionTemplate.execute(status -> {
-                        //判断是否已有空间，如果已有不能创建
-                        boolean exists = this.lambdaQuery()
-                                .eq(Space::getUserId, userId)
-                                .eq(Space::getSpaceType,space.getSpaceType())
-                                .exists();
-                        ThrowUtils.throwIf(exists, ErrorCode.OPERATION_ERROR, "每个用户每类空间只能创建一个");
-                        //创建
-                        boolean save = this.save(space);
-                        ThrowUtils.throwIf(!save, ErrorCode.OPERATION_ERROR, "保存到数据库失败");
-                //创建成功后，如果是团队空间，关联新增团队成员记录
-                if (space.getSpaceType().equals(SpaceTypeEnum.TEAM.getValue())) {
+                // 判断是否已有空间
+                boolean exists = this.lambdaQuery()
+                        .eq(Space::getUserId, userId)
+                        .eq(Space::getSpaceType, space.getSpaceType())
+                        .exists();
+                // 如果已有空间，就不能再创建
+                ThrowUtils.throwIf(exists, ErrorCode.OPERATION_ERROR, "每个用户每类空间只能创建一个");
+                // 创建
+                boolean result = this.save(space);
+                ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR, "保存空间到数据库失败");
+                // 创建成功后，如果是团队空间，关联新增团队成员记录
+                if (SpaceTypeEnum.TEAM.getValue() == space.getSpaceType()) {
                     SpaceUser spaceUser = new SpaceUser();
                     spaceUser.setSpaceId(space.getId());
-                    spaceUser.setUserId(space.getUserId());
+                    spaceUser.setUserId(userId);
                     spaceUser.setSpaceRole(SpaceRoleEnum.ADMIN.getValue());
-                    boolean result = spaceUserService.save(spaceUser);
-                    ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR, "创建成员记录失败");
-
+                    result = spaceUserService.save(spaceUser);
+                    ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR, "创建团队成员记录失败");
                 }
-                        //返回写入数据库的数据id
-                        return space.getId();
-                    }
-            );
-            //为了不让newSpaceId报黄，使用options包裹
+//                // 创建分表（仅对团队空间生效）为方便部署，暂时不使用
+//                dynamicShardingManager.createSpacePictureTable(space);
+                // 返回新写入的数据 id
+                return space.getId();
+            });
             return Optional.ofNullable(newSpaceId).orElse(-1L);
-
         }
-
     }
-
     @Override
     public QueryWrapper<Space> getQueryWrapper(SpaceQueryRequest spaceQueryRequest) {
         QueryWrapper<Space> queryWrapper=new QueryWrapper<>();
@@ -218,27 +220,25 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
     @Override
     public void fillSpaceBySpaceLevel(Space space) {
         SpaceLevelEnum spaceLevelEnum = SpaceLevelEnum.getEnumByValue(space.getSpaceLevel());
-        if(spaceLevelEnum!=null){
-            Long maxSize = space.getMaxSize();
-            if(space.getMaxSize()==null){
+        if (spaceLevelEnum != null) {
+            long maxSize = spaceLevelEnum.getMaxSize();
+            if (space.getMaxSize() == null) {
                 space.setMaxSize(maxSize);
             }
-            Long maxCount = space.getMaxCount();
-            if(space.getMaxCount()==null){
+            long maxCount = spaceLevelEnum.getMaxCount();
+            if (space.getMaxCount() == null) {
                 space.setMaxCount(maxCount);
             }
         }
     }
 
-    @Override
-    public void checkSpaceAuth(Space space, User loginUser) {
-        ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR, "空间不存在");
-        Long spaceUserId = space.getUserId();
-        Long loginUserId = loginUser.getId();
-        if (!loginUserId.equals(spaceUserId)) {
-            ThrowUtils.throwIf(!userService.isAdmin(loginUser), ErrorCode.NO_AUTH_ERROR);
-        }
 
+    @Override
+    public void checkSpaceAuth(User loginUser, Space space) {
+        // 仅本人或管理员可编辑
+        if (!space.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
     }
 }
 
