@@ -13,26 +13,27 @@ import com.wang.wangpicture.mapper.SpaceMapper;
 import com.wang.wangpicture.model.dto.space.SpaceAddRequest;
 import com.wang.wangpicture.model.dto.space.SpaceQueryRequest;
 import com.wang.wangpicture.model.entity.Space;
+import com.wang.wangpicture.model.entity.SpaceUser;
 import com.wang.wangpicture.model.entity.User;
 import com.wang.wangpicture.model.enums.SpaceLevelEnum;
+import com.wang.wangpicture.model.enums.SpaceRoleEnum;
 import com.wang.wangpicture.model.enums.SpaceTypeEnum;
 import com.wang.wangpicture.model.vo.SpaceVo;
 import com.wang.wangpicture.model.vo.UserVo;
 import com.wang.wangpicture.service.SpaceService;
+import com.wang.wangpicture.service.SpaceUserService;
 import com.wang.wangpicture.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.BuilderException;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +47,9 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
     private UserService userService;
     @Resource
     private TransactionTemplate transactionTemplate;
+    @Autowired
+    private SpaceUserService spaceUserService;
+
     /**
      * 创建空间
      * @param spaceAddRequest
@@ -90,6 +94,16 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
                         //创建
                         boolean save = this.save(space);
                         ThrowUtils.throwIf(!save, ErrorCode.OPERATION_ERROR, "保存到数据库失败");
+                //创建成功后，如果是团队空间，关联新增团队成员记录
+                if (space.getSpaceType().equals(SpaceTypeEnum.TEAM.getValue())) {
+                    SpaceUser spaceUser = new SpaceUser();
+                    spaceUser.setSpaceId(space.getId());
+                    spaceUser.setUserId(space.getUserId());
+                    spaceUser.setSpaceRole(SpaceRoleEnum.ADMIN.getValue());
+                    boolean result = spaceUserService.save(spaceUser);
+                    ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR, "创建成员记录失败");
+
+                }
                         //返回写入数据库的数据id
                         return space.getId();
                     }
