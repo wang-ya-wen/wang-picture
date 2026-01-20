@@ -5,12 +5,16 @@ import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.wang.wangpicture.manager.websocket.disruptor.PictureEditEvent;
+import com.wang.wangpicture.manager.websocket.disruptor.PictureEditEventProducer;
 import com.wang.wangpicture.manager.websocket.model.PictureEditActionEnum;
 import com.wang.wangpicture.manager.websocket.model.PictureEditMessageTypeEnum;
 import com.wang.wangpicture.manager.websocket.model.PictureEditRequestMessage;
 import com.wang.wangpicture.manager.websocket.model.PictureEditResponseMessage;
 import com.wang.wangpicture.model.entity.User;
 import com.wang.wangpicture.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -35,6 +39,9 @@ public class PictureEditHandler extends TextWebSocketHandler {
     private final Map<Long, Set<WebSocketSession>> pictureSessions = new ConcurrentHashMap<>();
     @Resource
     private UserService userService;
+    @Resource
+    @Lazy
+    private PictureEditEventProducer pictureEditEventProducer;
 
     public PictureEditHandler(UserService userService) {
         this.userService = userService;
@@ -77,33 +84,34 @@ public class PictureEditHandler extends TextWebSocketHandler {
         super.handleTextMessage(session, message);
         //获取其消息内容，将JSON转换为PictureEditMessage
         PictureEditRequestMessage pictureEditRequestMessage = JSONUtil.toBean(message.getPayload(), PictureEditRequestMessage.class);
-        String type = pictureEditRequestMessage.getType();
-        PictureEditMessageTypeEnum pictureEditMessageTypeEnum = PictureEditMessageTypeEnum.getEnumByValue(type);
         //从Session属性中获取到公共参数
         User user = (User) session.getAttributes().get("user");
         Long pictureId = (Long) session.getAttributes().get("pictureId");
-        //根据消息类型处理消息
-        switch (pictureEditMessageTypeEnum) {
+        //生产消息到disruptor环形队列中
+        pictureEditEventProducer.publishEvent(pictureEditRequestMessage, session, user, pictureId);
+//        //根据消息类型处理消息替换为上面的一行代码即可完成
+//        switch (pictureEditMessageTypeEnum) {
+//
+//            case ENTER_EDIT:
+//                handleEnterEditMessage(pictureEditRequestMessage, session, user, pictureId);
+//                break;
+//            case EXIT_EDIT:
+//                handleExitEditMessage(pictureEditRequestMessage, session, user, pictureId);
+//                break;
+//            case EDIT_ACTION:
+//                handleEditActionMessage(pictureEditRequestMessage, session, user, pictureId);
+//                break;
+//            default:
+//                //其他消息类型，返回错误提示
+//                PictureEditResponseMessage pictureEditResponseMessage = new PictureEditResponseMessage();
+//                pictureEditResponseMessage.setType(PictureEditMessageTypeEnum.ERROR.getValue());
+//                pictureEditResponseMessage.setMessage("未知消息类型");
+//                pictureEditResponseMessage.setUserVo(userService.getUserVO(user));
+//                session.sendMessage(new TextMessage(JSONUtil.toJsonStr(pictureEditResponseMessage)));
+//                break;
+//
+//        }
 
-            case ENTER_EDIT:
-                handleEnterEditMessage(pictureEditRequestMessage, session, user, pictureId);
-                break;
-            case EXIT_EDIT:
-                handleExitEditMessage(pictureEditRequestMessage, session, user, pictureId);
-                break;
-            case EDIT_ACTION:
-                handleEditActionMessage(pictureEditRequestMessage, session, user, pictureId);
-                break;
-            default:
-                //其他消息类型，返回错误提示
-                PictureEditResponseMessage pictureEditResponseMessage = new PictureEditResponseMessage();
-                pictureEditResponseMessage.setType(PictureEditMessageTypeEnum.ERROR.getValue());
-                pictureEditResponseMessage.setMessage("未知消息类型");
-                pictureEditResponseMessage.setUserVo(userService.getUserVO(user));
-                session.sendMessage(new TextMessage(JSONUtil.toJsonStr(pictureEditResponseMessage)));
-                break;
-
-        }
     }
 
     /**
